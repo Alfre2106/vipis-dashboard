@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VIPIS - Monitoreo de Calidad del Aire</title>
+<title>VIPIS - Monitoreo y Predicción de Calidad del Aire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -284,13 +284,154 @@ main {
   transform: scale(1.02);
 }
 
-/* Machine Learning Section */
+/* Formulario de Predicción Estilizado (Punto 3) */
 .ml-card {
   margin-top: 3rem;
   background: var(--card-bg);
-  border: 2px dashed #cbd5e1;
+  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 2rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+}
+
+.pred-form-box {
+  margin-top: 1.5rem;
+}
+
+.pred-campos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+}
+
+.pred-campo-item label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.4rem;
+}
+
+.pred-campo-item input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-main);
+  transition: all 0.2s ease;
+}
+
+.pred-campo-item input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+  background: #ffffff;
+}
+
+.pred-error {
+  color: var(--led-off);
+  font-size: 0.9rem;
+  font-weight: 600;
+  min-height: 1.3rem;
+  margin: 0.75rem 0 0.25rem;
+}
+
+.btn-clasificar {
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.85rem 1.5rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1rem;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(10, 46, 40, 0.15);
+}
+
+.btn-clasificar:hover:not(:disabled) {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.btn-clasificar:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.pred-res {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.pred-res[hidden] {
+  display: none;
+}
+
+.pred-res-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.pred-cat {
+  font-size: 1.15rem;
+  font-weight: 800;
+  padding: 0.35rem 1.1rem;
+  border-radius: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pred-conf {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.pred-barras-container {
+  margin-top: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.pred-fila {
+  display: grid;
+  grid-template-columns: 110px 1fr 50px;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pred-barra {
+  height: 8px;
+  border-radius: 6px;
+  background: var(--border);
+  overflow: hidden;
+}
+
+.pred-barra i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 6px;
+  transition: width 0.4s ease-out;
+}
+
+.pred-pct {
+  text-align: right;
+  color: var(--text-muted);
 }
 
 footer {
@@ -307,6 +448,8 @@ footer {
   .actuator-panel { flex-direction: column; align-items: flex-start; }
   .control-buttons { width: 100%; }
   .btn-control { flex: 1; justify-content: center; }
+  .pred-campos { grid-template-columns: 1fr; }
+  .pred-fila { grid-template-columns: 90px 1fr 45px; }
 }
 </style>
 </head>
@@ -319,7 +462,7 @@ footer {
         <span class="badge-dot"></span> Sistema IoT Activo
       </div>
       <h1>Calidad del Aire - VIPIS</h1>
-      <p>Monitoreo teleférico y ambiental en la Vía Parque Isla de Salamanca con telemetría en tiempo real y control remoto mediante nube.</p>
+      <p>Monitoreo ambiental en la Vía Parque Isla de Salamanca con telemetría en tiempo real, control remoto de actuador y modelo de IA.</p>
       <nav>
         <a href="#tablero">Mediciones</a>
         <a href="#control-led">Control Remoto</a>
@@ -332,21 +475,21 @@ footer {
 <main>
   <div class="container">
     
-    <!-- Tablero IoT -->
+    <!-- Tablero IoT (Punto 2) -->
     <section id="tablero">
       <div class="section-header">
         <h2>Telemetría Ambiental</h2>
-        <p>Visualización de variables físicas procesadas por ThingSpeak.</p>
+        <p>Visualización en tiempo real alimentada desde el canal público de ThingSpeak.</p>
       </div>
 
       <div class="dashboard-grid" id="grid-graficos"></div>
     </section>
 
-    <!-- Control de Actuador (Punto 4) -->
+    <!-- Control Remoto de Actuador (Punto 4) -->
     <section id="control-led" class="actuator-card">
       <div class="section-header" style="margin-bottom: 0;">
         <h2>Control Remoto de Actuador (LED Cloud Control)</h2>
-        <p>Orquestación de estado desde FastAPI desplegada en Render con persistencia en Neon PostgreSQL.</p>
+        <p>Orquestación remota desde la API en Render con persistencia en Neon PostgreSQL.</p>
       </div>
 
       <div class="actuator-panel">
@@ -364,13 +507,29 @@ footer {
       </div>
     </section>
 
-    <!-- Reservada para el Punto 3 -->
+    <!-- Clasificación y Predicción IA (Punto 3) -->
     <section id="prediccion" class="ml-card">
       <div class="section-header" style="margin-bottom: 0;">
-        <h2>Clasificación y Predicción con IA</h2>
-        <p>Espacio asignado para la integración del modelo de evaluación de calidad del aire (Punto 3).</p>
+        <h2>Predecir la Calidad del Aire con IA</h2>
+        <p>Ingresa los valores del sensor para obtener la estimación de categoría generada por el modelo.</p>
       </div>
-      <div id="contenedor-formulario"></div>
+
+      <div id="contenedor-formulario">
+        <form class="pred-form-box" id="pred-form" novalidate>
+          <div class="pred-campos" id="pred-campos"></div>
+          <p class="pred-error" id="pred-error" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn-clasificar" id="pred-boton">Clasificar Calidad del Aire</button>
+
+          <div class="pred-res" id="pred-res" hidden>
+            <p style="margin:0; color:var(--text-muted); font-size:0.88rem; font-weight:600;">Categoría estimada:</p>
+            <div class="pred-res-header">
+              <span class="pred-cat" id="pred-cat"></span>
+              <span class="pred-conf" id="pred-conf"></span>
+            </div>
+            <div class="pred-barras-container" id="pred-barras"></div>
+          </div>
+        </form>
+      </div>
     </section>
 
   </div>
@@ -383,7 +542,7 @@ footer {
 </footer>
 
 <script>
-/* ===== CONFIGURACIÓN THINGSPEAK Y API ===== */
+/* ===== 1. CONFIGURACIÓN THINGSPEAK Y API ===== */
 const CANAL_ID = "3541323"; 
 const API_URL = "https://vipis-air-quality-api.onrender.com";
 
@@ -427,7 +586,7 @@ GRAFICOS.forEach(g => {
   grid.appendChild(card);
 });
 
-/* ===== LÓGICA DE CONTROL DEL LED (PUNTO 4) ===== */
+/* ===== 2. LÓGICA DE CONTROL DEL LED (PUNTO 4) ===== */
 async function consultarEstadoLED() {
   try {
     const res = await fetch(`${API_URL}/led`);
@@ -466,9 +625,108 @@ function actualizarUILED(estado) {
   }
 }
 
-// Consultar estado inicial e intervalo periódico
 consultarEstadoLED();
 setInterval(consultarEstadoLED, 5000);
+
+/* ===== 3. FORMULARIO DE PREDICCIÓN CON IA (PUNTO 3) ===== */
+(function () {
+  const USAR_MODELO_REAL = false;
+
+  const CAMPOS = [
+    { id: "eco2", etiqueta: "eCO₂", unidad: "ppm", min: 0, max: 5000, valor: 800 },
+    { id: "tvoc", etiqueta: "TVOC", unidad: "ppb", min: 0, max: 2000, valor: 150 },
+    { id: "temp", etiqueta: "Temperatura", unidad: "°C", min: -10, max: 60, valor: 28 },
+    { id: "hum",  etiqueta: "Humedad", unidad: "%", min: 0, max: 100, valor: 65 }
+  ];
+
+  const COLORES = { buena: "#10b981", moderada: "#f59e0b", mala: "#f97316", peligrosa: "#ef4444" };
+
+  const $ = id => document.getElementById(id);
+  const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+  $("pred-campos").innerHTML = CAMPOS.map(c => `
+    <div class="pred-campo-item">
+      <label for="pred-${c.id}">${c.etiqueta} (${c.unidad})</label>
+      <input id="pred-${c.id}" type="number" inputmode="decimal" step="any"
+             min="${c.min}" max="${c.max}" value="${c.valor}">
+    </div>`).join("");
+
+  const CENTROS = [
+    { label: "Buena", eco2: 450, tvoc: 50 },
+    { label: "Moderada", eco2: 800, tvoc: 200 },
+    { label: "Mala", eco2: 1250, tvoc: 450 },
+    { label: "Peligrosa", eco2: 2000, tvoc: 900 }
+  ];
+
+  function clasificarSimulado(v) {
+    const pesos = CENTROS.map(c => {
+      let d2 = 0;
+      if (v.eco2 !== undefined) d2 += ((v.eco2 - c.eco2) / 500) ** 2;
+      if (v.tvoc !== undefined) d2 += ((v.tvoc - c.tvoc) / 350) ** 2;
+      return Math.exp(-3 * Math.sqrt(d2));
+    });
+    const suma = pesos.reduce((a, b) => a + b, 0);
+    return CENTROS.map((c, i) => ({ label: c.label, value: pesos[i] / suma }));
+  }
+
+  let clasificador = null;
+  async function iniciarModelo() {
+    clasificador = new EdgeImpulseClassifier();
+    await clasificador.init();
+  }
+
+  function clasificarReal(v) {
+    const features = CAMPOS.map(c => v[c.id]);
+    const r = clasificador.classify(features);
+    return r.results.map(x => ({ label: x.label, value: x.value }));
+  }
+
+  function mostrar(resultados) {
+    const mejor = resultados.reduce((a, b) => (b.value > a.value ? b : a));
+    const color = k => COLORES[norm(k)] || "#64748b";
+    const cat = $("pred-cat");
+    cat.textContent = mejor.label;
+    cat.style.background = color(mejor.label) + "22";
+    cat.style.color = color(mejor.label);
+    
+    $("pred-conf").textContent = Math.round(mejor.value * 100) + "% de confianza";
+    $("pred-barras").innerHTML = resultados.map(r => `
+      <div class="pred-fila">
+        <span>${r.label}</span>
+        <div class="pred-barra"><i style="background:${color(r.label)}" data-w="${Math.round(r.value * 100)}"></i></div>
+        <span class="pred-pct">${Math.round(r.value * 100)}%</span>
+      </div>`).join("");
+      
+    $("pred-res").hidden = false;
+    requestAnimationFrame(() =>
+      $("pred-barras").querySelectorAll("i").forEach(b => (b.style.width = b.dataset.w + "%")));
+  }
+
+  $("pred-form").addEventListener("submit", async e => {
+    e.preventDefault();
+    const v = {};
+    for (const c of CAMPOS) {
+      const crudo = $("pred-" + c.id).value.trim();
+      const n = Number(crudo);
+      if (crudo === "" || Number.isNaN(n)) { $("pred-error").textContent = `Escribe un número válido en ${c.etiqueta}.`; return; }
+      if (n < c.min || n > c.max) { $("pred-error").textContent = `${c.etiqueta} debe estar entre ${c.min} y ${c.max} ${c.unidad}.`; return; }
+      v[c.id] = n;
+    }
+    $("pred-error").textContent = "";
+    try {
+      if (USAR_MODELO_REAL) {
+        if (!clasificador) { $("pred-boton").disabled = true; await iniciarModelo(); $("pred-boton").disabled = false; }
+        mostrar(clasificarReal(v));
+      } else {
+        mostrar(clasificarSimulado(v));
+      }
+    } catch (err) {
+      $("pred-boton").disabled = false;
+      $("pred-error").textContent = "No se pudo ejecutar el modelo. Revisa los archivos .js y .wasm.";
+      console.error(err);
+    }
+  });
+})();
 </script>
 </body>
 </html>

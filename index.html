@@ -2,162 +2,429 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Calidad del aire en la VIPIS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIPIS - Monitoreo de Calidad del Aire</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@600;800&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-  --manglar:#0e3b33;      /* verde profundo del manglar */
-  --laguna:#1f7a6d;       /* agua salobre */
-  --niebla:#eef3f1;       /* fondo */
-  --arena:#e9dfc8;        /* borde y detalles */
-  --alerta:#d98e04;       /* señal de alerta */
-  --texto:#16241f;
-  --suave:#586b65;
-  --fuente-titulo:"Bitter", Georgia, serif;
-  --fuente-texto:"Source Sans 3", "Segoe UI", system-ui, sans-serif;
+:root {
+  --primary: #0a2e28;
+  --primary-light: #165b50;
+  --accent: #10b981;
+  --bg-main: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --led-on: #10b981;
+  --led-off: #ef4444;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
 }
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--niebla);color:var(--texto);font-family:var(--fuente-texto);font-size:1.0625rem;line-height:1.55}
-a{color:var(--laguna)}
-:focus-visible{outline:3px solid var(--alerta);outline-offset:2px}
 
-/* Encabezado */
-header{background:var(--manglar);color:#fff;padding:3rem 1.25rem 4.5rem;position:relative}
-.contenedor{max-width:1080px;margin:0 auto}
-header h1{font-family:var(--fuente-titulo);font-weight:800;font-size:clamp(2rem,6vw,3.4rem);line-height:1.08;margin:0 0 .75rem;max-width:16ch}
-header p{margin:0;max-width:56ch;color:#cfe3dd}
-nav{margin-top:1.5rem;display:flex;gap:.5rem;flex-wrap:wrap}
-nav a{color:#fff;text-decoration:none;border:1px solid #4d7a70;border-radius:999px;padding:.4rem 1rem;font-weight:600}
-nav a:hover{background:var(--laguna);border-color:var(--laguna)}
-header svg{position:absolute;left:0;bottom:-1px;width:100%;height:46px;display:block}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-/* Tablero */
-main{padding:0 1.25rem 3rem}
-h2{font-family:var(--fuente-titulo);font-size:1.5rem;margin:2.25rem 0 .25rem}
-.sub{color:var(--suave);margin:0 0 1.25rem}
-#tablero{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-.grafico{background:#fff;border:1px solid var(--arena);border-radius:6px;padding:1rem 1rem .75rem}
-.grafico:first-child{grid-column:1 / -1}
-.grafico h3{font-family:var(--fuente-titulo);font-size:1.1rem;margin:0}
-.grafico .detalle{font-size:.9rem;color:var(--suave);margin:0 0 .6rem}
-.marco{height:260px;border-radius:4px;overflow:hidden;background:var(--niebla)}
-.grafico:first-child .marco{height:320px}
-.marco iframe{width:100%;height:100%;border:0;display:block}
-.vacio{height:100%;display:grid;place-items:center;text-align:center;padding:1rem;color:var(--suave);font-size:.95rem}
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  min-height: 100vh;
+}
 
-/* Panel de Control LED (Punto 4) */
-#control-led{margin-top:2.5rem;border:1px solid var(--arena);border-radius:6px;background:#fff;padding:1.5rem}
-#control-led h2{margin-top:0}
-.led-box{display:flex;align-items:center;gap:1.5rem;margin-top:1rem;flex-wrap:wrap}
-.led-status{display:flex;align-items:center;gap:.75rem;font-weight:600;font-size:1.1rem}
-.indicador-led{width:20px;height:20px;border-radius:50%;background:#ccc;box-shadow:0 0 4px rgba(0,0,0,0.2)}
-.indicador-led.encendido{background:#28a745;box-shadow:0 0 12px #28a745}
-.indicador-led.apagado{background:#dc3545;box-shadow:0 0 4px #dc3545}
-.btn-led{padding:.6rem 1.4rem;border:none;border-radius:6px;font-weight:600;cursor:pointer;font-size:1rem;transition:opacity .2s}
-.btn-led:hover{opacity:.9}
-.btn-on{background:#28a745;color:#fff}
-.btn-off{background:#dc3545;color:#fff}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
 
-/* Sección reservada para el Punto 3 */
-#prediccion{margin-top:2.5rem;border:2px dashed var(--laguna);border-radius:6px;background:#fff;padding:1.5rem}
-#prediccion h2{margin-top:0}
+/* Header & Banner */
+header {
+  background: linear-gradient(135deg, #061e1a 0%, var(--primary) 60%, var(--primary-light) 100%);
+  color: #ffffff;
+  padding: 3rem 0 4rem;
+  box-shadow: 0 10px 30px -10px rgba(10, 46, 40, 0.3);
+  position: relative;
+}
 
-footer{background:var(--manglar);color:#b5cfc8;padding:1.5rem 1.25rem;font-size:.95rem}
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-@media (max-width:820px){
-  #tablero{grid-template-columns:1fr}
-  .marco,.grafico:first-child .marco{height:240px}
-  header{padding-top:2rem}
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  padding: 0.35rem 0.9rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.badge-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #34d399;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #34d399;
+}
+
+header h1 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+
+header p {
+  color: #94a3b8;
+  font-size: 1.1rem;
+  max-width: 68ch;
+}
+
+nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #ffffff;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 0.55rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+nav a:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #061e1a;
+  transform: translateY(-2px);
+}
+
+/* Dashboard Content */
+main {
+  padding: 3rem 0 5rem;
+}
+
+.section-header {
+  margin-bottom: 2rem;
+}
+
+.section-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: -0.01em;
+}
+
+.section-header p {
+  color: var(--text-muted);
+  font-size: 0.98rem;
+}
+
+/* Grid Layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.75rem;
+}
+
+.chart-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.08);
+}
+
+.chart-header {
+  margin-bottom: 1rem;
+}
+
+.chart-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.chart-header p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.iframe-container {
+  width: 100%;
+  height: 280px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f1f5f9;
+  border: 1px solid #f8fafc;
+}
+
+.iframe-container iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
+/* LED Control Panel */
+.actuator-card {
+  margin-top: 3rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+}
+
+.actuator-panel {
+  margin-top: 1.25rem;
+  background: var(--bg-main);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-title {
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.led-glow {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.led-glow.on {
+  background-color: var(--led-on);
+  box-shadow: 0 0 14px var(--led-on);
+}
+
+.led-glow.off {
+  background-color: var(--led-off);
+  box-shadow: 0 0 8px var(--led-off);
+}
+
+.control-buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-control {
+  padding: 0.75rem 1.75rem;
+  border: none;
+  border-radius: 10px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-on {
+  background-color: var(--led-on);
+  color: #ffffff;
+}
+
+.btn-off {
+  background-color: var(--led-off);
+  color: #ffffff;
+}
+
+.btn-control:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Machine Learning Section */
+.ml-card {
+  margin-top: 3rem;
+  background: var(--card-bg);
+  border: 2px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 2rem;
+}
+
+footer {
+  background: var(--primary);
+  color: #94a3b8;
+  padding: 2rem 0;
+  font-size: 0.9rem;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+@media (max-width: 850px) {
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .actuator-panel { flex-direction: column; align-items: flex-start; }
+  .control-buttons { width: 100%; }
+  .btn-control { flex: 1; justify-content: center; }
 }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="contenedor">
-    <h1>Calidad del aire en la Vía Parque Isla de Salamanca</h1>
-    <p>Mediciones en tiempo real de CO₂ equivalente, compuestos orgánicos volátiles, temperatura y humedad, enviadas por un sensor conectado a un ESP32.</p>
-    <nav>
-      <a href="#tablero">Ver mediciones</a>
-      <a href="#control-led">Control del LED</a>
-      <a href="#prediccion">Predecir la calidad del aire</a>
-    </nav>
+  <div class="container">
+    <div class="header-content">
+      <div class="badge-status">
+        <span class="badge-dot"></span> Sistema IoT Activo
+      </div>
+      <h1>Calidad del Aire - VIPIS</h1>
+      <p>Monitoreo teleférico y ambiental en la Vía Parque Isla de Salamanca con telemetría en tiempo real y control remoto mediante nube.</p>
+      <nav>
+        <a href="#tablero">Mediciones</a>
+        <a href="#control-led">Control Remoto</a>
+        <a href="#prediccion">Predicción IA</a>
+      </nav>
+    </div>
   </div>
-  <svg viewBox="0 0 1440 46" preserveAspectRatio="none" aria-hidden="true"><path d="M0 46V20c120 18 240 18 360 4s240-22 360-14 240 28 360 24 240-20 360-12V46z" fill="#eef3f1"/></svg>
 </header>
 
 <main>
-  <div class="contenedor">
-    <h2>Mediciones recientes</h2>
-    <p class="sub">Los gráficos se actualizan solos con los datos que llegan a ThingSpeak.</p>
-    <div id="tablero"></div>
+  <div class="container">
+    
+    <!-- Tablero IoT -->
+    <section id="tablero">
+      <div class="section-header">
+        <h2>Telemetría Ambiental</h2>
+        <p>Visualización de variables físicas procesadas por ThingSpeak.</p>
+      </div>
 
-    <!-- Control de Actuador / LED (Punto 4 del Parcial) -->
-    <section id="control-led">
-      <h2>Control remoto de actuador (LED Cloud Control)</h2>
-      <p class="sub">Envía órdenes de encendido/apagado al ESP32 a través de la API en Render con persistencia en Neon PostgreSQL.</p>
-      <div class="led-box">
-        <div class="led-status">
-          Estado actual: <span id="dot-led" class="indicador-led apagado"></span> <span id="txt-led">Consultando...</span>
+      <div class="dashboard-grid" id="grid-graficos"></div>
+    </section>
+
+    <!-- Control de Actuador (Punto 4) -->
+    <section id="control-led" class="actuator-card">
+      <div class="section-header" style="margin-bottom: 0;">
+        <h2>Control Remoto de Actuador (LED Cloud Control)</h2>
+        <p>Orquestación de estado desde FastAPI desplegada en Render con persistencia en Neon PostgreSQL.</p>
+      </div>
+
+      <div class="actuator-panel">
+        <div class="status-indicator">
+          <span class="status-title">Estado del Actuador:</span>
+          <div class="status-badge">
+            <span id="dot-led" class="led-glow off"></span>
+            <span id="txt-led">Sincronizando...</span>
+          </div>
         </div>
-        <button class="btn-led btn-on" onclick="enviarComandoLED('on')">Encender LED</button>
-        <button class="btn-led btn-off" onclick="enviarComandoLED('off')">Apagar LED</button>
+        <div class="control-buttons">
+          <button class="btn-control btn-on" onclick="enviarComandoLED('on')">ENCENDER</button>
+          <button class="btn-control btn-off" onclick="enviarComandoLED('off')">APAGAR</button>
+        </div>
       </div>
     </section>
 
-    <!-- Reservada para el Punto 3: aquí va el formulario que clasifica la calidad del aire -->
-    <section id="prediccion">
-      <h2>Predecir la calidad del aire</h2>
-      <p class="sub">Esta sección queda reservada para el formulario del Punto 3: el usuario ingresará eCO₂, TVOC, temperatura y humedad, y recibirá la categoría estimada por el modelo.</p>
+    <!-- Reservada para el Punto 3 -->
+    <section id="prediccion" class="ml-card">
+      <div class="section-header" style="margin-bottom: 0;">
+        <h2>Clasificación y Predicción con IA</h2>
+        <p>Espacio asignado para la integración del modelo de evaluación de calidad del aire (Punto 3).</p>
+      </div>
       <div id="contenedor-formulario"></div>
     </section>
+
   </div>
 </main>
 
 <footer>
-  <div class="contenedor">Proyecto de Inteligencia Artificial, Corporación Universitaria Latinoamericana. Datos: ESP32 y ThingSpeak.</div>
+  <div class="container">
+    Corporación Universitaria Latinoamericana &bull; Sistemas Integrados IoT &bull; ESP32 + ThingSpeak + FastAPI
+  </div>
 </footer>
 
 <script>
-/* ===== CONFIGURACIÓN OFICIAL THINGSPEAK & API ===== */
+/* ===== CONFIGURACIÓN THINGSPEAK Y API ===== */
 const CANAL_ID = "3541323"; 
 const API_URL = "https://vipis-air-quality-api.onrender.com";
 
 const GRAFICOS = [
-  { titulo:"CO₂ equivalente (eCO₂)", detalle:"Línea, en partes por millón (ppm)", campo:1, tipo:"line", ejeY:"eCO₂ (ppm)" },
-  { titulo:"Compuestos orgánicos volátiles (TVOC)", detalle:"Barras, en partes por billón (ppb)", campo:2, tipo:"bar", ejeY:"TVOC (ppb)" },
-  { titulo:"Temperatura actual", detalle:"Indicador, en grados Celsius (°C)", campo:3, tipo:"gauge", url:"https://thingspeak.com/channels/3541323/widgets/1318374" },
-  { titulo:"Humedad relativa actual", detalle:"Indicador, en porcentaje (%)", campo:4, tipo:"gauge", url:"https://thingspeak.com/channels/3541323/widgets/1318375" }
+  { titulo: "CO₂ Equivalente (eCO₂)", detalle: "Evolución temporal en partes por millón (ppm)", campo: 1, tipo: "line", ejeY: "eCO₂ (ppm)" },
+  { titulo: "Compuestos Orgánicos Volátiles (TVOC)", detalle: "Concentración en partes por billón (ppb)", campo: 2, tipo: "bar", ejeY: "TVOC (ppb)" },
+  { titulo: "Temperatura Ambiental", detalle: "Medición actual en grados Celsius (°C)", tipo: "gauge", url: "https://thingspeak.com/channels/3541323/widgets/1318377" },
+  { titulo: "Humedad Relativa", detalle: "Porcentaje de humedad en aire (%)", tipo: "gauge", url: "https://thingspeak.com/channels/3541323/widgets/1318378" }
 ];
-/* ================================================= */
 
-function urlGrafico(g){
+function urlGrafico(g) {
   if (g.tipo === "gauge") return g.url;
   const p = new URLSearchParams({
-    bgcolor:"#ffffff", color:"#1f7a6d", dynamic:"true", results:"60",
-    title:g.titulo, type:g.tipo, xaxis:"Fecha y hora", yaxis:g.ejeY
+    bgcolor: "#ffffff",
+    color: "#10b981",
+    dynamic: "true",
+    results: "60",
+    title: g.titulo,
+    type: g.tipo,
+    xaxis: "Fecha y Hora",
+    yaxis: g.ejeY
   });
   return `https://thingspeak.com/channels/${CANAL_ID}/charts/${g.campo}?${p}`;
 }
 
-const tablero = document.getElementById("tablero");
+const grid = document.getElementById("grid-graficos");
 GRAFICOS.forEach(g => {
-  const art = document.createElement("article");
-  art.className = "grafico";
+  const card = document.createElement("article");
+  card.className = "chart-card";
   const src = urlGrafico(g);
-  art.innerHTML = `<h3></h3><p class="detalle"></p><div class="marco"></div>`;
-  art.querySelector("h3").textContent = g.titulo;
-  art.querySelector(".detalle").textContent = g.detalle;
-  const marco = art.querySelector(".marco");
   
-  const f = document.createElement("iframe");
-  f.src = src; f.title = g.titulo; f.loading = "lazy";
-  marco.appendChild(f);
-  tablero.appendChild(art);
+  card.innerHTML = `
+    <div class="chart-header">
+      <h3>${g.titulo}</h3>
+      <p>${g.detalle}</p>
+    </div>
+    <div class="iframe-container">
+      <iframe src="${src}" title="${g.titulo}" loading="lazy"></iframe>
+    </div>
+  `;
+  grid.appendChild(card);
 });
 
 /* ===== LÓGICA DE CONTROL DEL LED (PUNTO 4) ===== */
@@ -167,7 +434,7 @@ async function consultarEstadoLED() {
     const data = await res.json();
     actualizarUILED(data.estado);
   } catch (err) {
-    document.getElementById("txt-led").textContent = "Error al conectar con API";
+    document.getElementById("txt-led").textContent = "Sin conexión";
   }
 }
 
@@ -190,16 +457,16 @@ async function enviarComandoLED(estado) {
 function actualizarUILED(estado) {
   const dot = document.getElementById("dot-led");
   const txt = document.getElementById("txt-led");
-  if (estado.toLowerCase() === "on") {
-    dot.className = "indicador-led encendido";
+  if (estado && estado.toLowerCase() === "on") {
+    dot.className = "led-glow on";
     txt.textContent = "ENCENDIDO";
   } else {
-    dot.className = "indicador-led apagado";
+    dot.className = "led-glow off";
     txt.textContent = "APAGADO";
   }
 }
 
-// Consultar estado inicial del LED y refrescar cada 5 segundos
+// Consultar estado inicial e intervalo periódico
 consultarEstadoLED();
 setInterval(consultarEstadoLED, 5000);
 </script>

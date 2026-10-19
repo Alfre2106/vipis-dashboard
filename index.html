@@ -194,13 +194,24 @@ main {
   color: var(--text-muted);
 }
 
+/* Contenedor Responsive de iFrames */
 .iframe-container {
   width: 100%;
-  height: 280px;
+  min-height: 320px;
+  height: 320px;
   border-radius: 12px;
   overflow: hidden;
-  background-color: #f1f5f9;
-  border: 1px solid #f8fafc;
+  background-color: #ffffff;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.iframe-container.gauge-type {
+  min-height: 260px;
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .iframe-container iframe {
@@ -481,6 +492,10 @@ footer {
   .dashboard-grid { 
     grid-template-columns: 1fr; 
   }
+  .iframe-container {
+    min-height: 280px;
+    height: 280px;
+  }
 }
 
 @media (max-width: 600px) {
@@ -621,8 +636,10 @@ function urlGrafico(g) {
     results: "60",
     title: g.titulo,
     type: g.tipo,
-    xaxis: "Fecha y Hora",
-    yaxis: g.ejeY
+    xaxis: "Tiempo",
+    yaxis: g.ejeY,
+    width: "auto",
+    height: "auto"
   });
   return `https://thingspeak.com/channels/${CANAL_ID}/charts/${g.campo}?${p}`;
 }
@@ -632,13 +649,14 @@ GRAFICOS.forEach(g => {
   const card = document.createElement("article");
   card.className = "chart-card";
   const src = urlGrafico(g);
+  const esGauge = g.tipo === "gauge";
   
   card.innerHTML = `
     <div class="chart-header">
       <h3>${g.titulo}</h3>
       <p>${g.detalle}</p>
     </div>
-    <div class="iframe-container">
+    <div class="iframe-container ${esGauge ? 'gauge-type' : ''}">
       <iframe src="${src}" title="${g.titulo}" loading="lazy"></iframe>
     </div>
   `;

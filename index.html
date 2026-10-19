@@ -17,6 +17,7 @@
   --primary: #0a2e28;
   --primary-light: #165b50;
   --accent: #10b981;
+  --accent-hover: #0d8c6d;
   --bg-main: #f8fafc;
   --card-bg: #ffffff;
   --border: #e2e8f0;
@@ -487,6 +488,198 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+/* ================= CHAT BOT FLOTANTE ESTILO BURBUJA ================= */
+.chat-widget-container {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 9999;
+  font-family: var(--font-sans);
+}
+
+.chat-bubble-btn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  border: none;
+  box-shadow: 0 6px 20px rgba(10, 46, 40, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.chat-bubble-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+}
+
+.chat-bubble-btn svg {
+  width: 28px;
+  height: 28px;
+  fill: #ffffff;
+}
+
+.chat-window {
+  position: absolute;
+  bottom: 75px;
+  right: 0;
+  width: 360px;
+  max-width: calc(100vw - 30px);
+  height: 480px;
+  max-height: 75vh;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.95);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom right;
+}
+
+.chat-window.active {
+  transform: scale(1);
+  opacity: 1;
+  visibility: visible;
+}
+
+.chat-window-header {
+  background: linear-gradient(135deg, #061e1a 0%, var(--primary) 100%);
+  color: #ffffff;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.chat-window-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.chat-close-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 0.2rem;
+  transition: color 0.2s;
+}
+
+.chat-close-btn:hover {
+  color: #ffffff;
+}
+
+.chat-messages-body {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #0f172a;
+}
+
+.chat-msg {
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  max-width: 85%;
+  word-break: break-word;
+}
+
+.chat-msg.system, .chat-msg.ai {
+  background-color: #1e293b;
+  color: #e2e8f0;
+  align-self: flex-start;
+  border: 1px solid #334155;
+}
+
+.chat-msg.user {
+  background-color: #059669;
+  color: #ffffff;
+  align-self: flex-end;
+}
+
+.chat-msg span {
+  display: block;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-bottom: 3px;
+  opacity: 0.8;
+}
+
+.chat-input-footer {
+  padding: 0.8rem;
+  background-color: #1e293b;
+  border-top: 1px solid #334155;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.chat-input-footer textarea {
+  flex: 1;
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.6rem 0.8rem;
+  color: #ffffff;
+  font-size: 0.88rem;
+  resize: none;
+  outline: none;
+  max-height: 100px;
+  font-family: var(--font-sans);
+}
+
+.chat-input-footer textarea:focus {
+  border-color: var(--accent);
+}
+
+.chat-send-btn {
+  background-color: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.chat-send-btn:hover {
+  background-color: var(--accent-hover);
+}
+
+.chat-badge-accion {
+  display: inline-block;
+  font-size: 0.68rem;
+  background-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
 /* Reglas Responsive y Móviles */
 @media (max-width: 850px) {
   .dashboard-grid { 
@@ -615,6 +808,43 @@ footer {
   </div>
 </footer>
 
+<!-- ================= WIDGET DE CHAT BOT FLOTANTE ================= -->
+<div class="chat-widget-container">
+  <div class="chat-window" id="chatWindow">
+    <div class="chat-window-header">
+      <div class="chat-window-title">
+        <span class="badge-dot" style="box-shadow: 0 0 6px #34d399;"></span>
+        Asistente IA - VIPIS
+      </div>
+      <button class="chat-close-btn" onclick="toggleChatWindow()" title="Cerrar chat">&times;</button>
+    </div>
+    
+    <!-- Indicador de Estado del LED integrado -->
+    <div style="background-color: #0f172a; padding: 8px 12px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
+      <span style="color: #94a3b8; font-weight: 600;">Estado Actuador (ESP32):</span>
+      <span id="chat-led-indicator" style="font-weight: bold; color: #ef4444;">● APAGADO</span>
+    </div>
+
+    <div class="chat-messages-body" id="chatBoxBody">
+      <div class="chat-msg system">
+        <span>Sistema VIPIS</span>
+        ¡Hola! Pregúntame sobre el circuito, las mediciones o escribe *"Enciende el LED"*.
+      </div>
+    </div>
+
+    <div class="chat-input-footer">
+      <textarea id="chatTextInput" rows="1" placeholder="Escribe tu mensaje..." onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); enviarMensajeChatWidget(); }"></textarea>
+      <button class="chat-send-btn" onclick="enviarMensajeChatWidget()" title="Enviar mensaje">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+      </button>
+    </div>
+  </div>
+
+  <button class="chat-bubble-btn" onclick="toggleChatWindow()" title="Abrir Asistente IA">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+  </button>
+</div>
+
 <script>
 /* ===== 1. CONFIGURACIÓN THINGSPEAK Y API ===== */
 const CANAL_ID = "3541323"; 
@@ -693,12 +923,16 @@ async function enviarComandoLED(estado) {
 function actualizarUILED(estado) {
   const dot = document.getElementById("dot-led");
   const txt = document.getElementById("txt-led");
+  const chatLedInd = document.getElementById("chat-led-indicator");
+  
   if (estado && estado.toLowerCase() === "on") {
-    dot.className = "led-glow on";
-    txt.textContent = "ENCENDIDO";
+    if(dot) dot.className = "led-glow on";
+    if(txt) txt.textContent = "ENCENDIDO";
+    if(chatLedInd) { chatLedInd.innerHTML = "● ENCENDIDO"; chatLedInd.style.color = "#34d399"; }
   } else {
-    dot.className = "led-glow off";
-    txt.textContent = "APAGADO";
+    if(dot) dot.className = "led-glow off";
+    if(txt) txt.textContent = "APAGADO";
+    if(chatLedInd) { chatLedInd.innerHTML = "● APAGADO"; chatLedInd.style.color = "#ef4444"; }
   }
 }
 
@@ -810,6 +1044,81 @@ setInterval(consultarEstadoLED, 5000);
     }
   });
 })();
+
+/* ===== 4. LÓGICA DEL CHAT BOT FLOTANTE WIDGET ===== */
+function toggleChatWindow() {
+  const win = document.getElementById("chatWindow");
+  win.classList.toggle("active");
+  if (win.classList.contains("active")) {
+    document.getElementById("chatTextInput").focus();
+  }
+}
+
+async function enviarMensajeChatWidget() {
+  const input = document.getElementById("chatTextInput");
+  const chatBody = document.getElementById("chatBoxBody");
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  // Mostrar mensaje del usuario
+  chatBody.innerHTML += `
+    <div class="chat-msg user">
+      <span>Tú</span>
+      ${escapeHtml(texto)}
+    </div>
+  `;
+  input.value = "";
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  // Mensaje temporal de carga
+  const tempId = "loading-chat-" + Date.now();
+  chatBody.innerHTML += `
+    <div class="chat-msg system" id="${tempId}">
+      <span>Asistente IA</span>
+      Procesando solicitud...
+    </div>
+  `;
+  chatBody.scrollTop = chatBody.scrollHeight;
+
+  try {
+    const response = await fetch(`${API_URL}/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ texto })
+    });
+    const data = await response.json();
+
+    document.getElementById(tempId).remove();
+
+    const accionBadge = data.accion && data.accion !== "desconocido" 
+      ? `<div class="chat-badge-accion">Acción: ${data.accion}</div><br>` 
+      : '';
+
+    const respuestaTexto = data.respuesta || data.mensaje || "Operación procesada con éxito.";
+
+    chatBody.innerHTML += `
+      <div class="chat-msg ai">
+        <span>Asistente IA VIPIS</span>
+        ${accionBadge}${escapeHtml(respuestaTexto)}
+      </div>
+    `;
+    consultarEstadoLED(); // Sincroniza el indicador LED si la IA encendió/apagó el actuador
+  } catch (error) {
+    document.getElementById(tempId).remove();
+    chatBody.innerHTML += `
+      <div class="chat-msg system" style="background-color: #7f1d1d; color: #fca5a5;">
+        <span>Error</span>
+        No se pudo conectar con la API en Render.
+      </div>
+    `;
+  }
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function escapeHtml(text) {
+  const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
 </script>
 </body>
 </html>

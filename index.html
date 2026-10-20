@@ -1090,11 +1090,25 @@ async function enviarMensajeChatWidget() {
 
     document.getElementById(tempId).remove();
 
-    const accionBadge = data.accion && data.accion !== "desconocido" 
-      ? `<div class="chat-badge-accion">Acción: ${data.accion}</div><br>` 
-      : '';
+    const accion = data.accion || "desconocido";
+    let respuestaTexto = data.respuesta || data.mensaje || "";
 
-    const respuestaTexto = data.respuesta || data.mensaje || "Operación procesada con éxito.";
+    // Forzar redacción conversacional robusta si llega vacía o con el texto por defecto
+    if (!respuestaTexto || respuestaTexto === "Operación procesada con éxito.") {
+      if (accion === "encender_led") {
+        respuestaTexto = "¡Entendido! He enviado la orden para encender el LED del sistema VIPIS.";
+      } else if (accion === "apagar_led") {
+        respuestaTexto = "Claro que sí, he procedido a apagar el LED del dispositivo.";
+      } else if (accion === "ultimo_registro") {
+        respuestaTexto = "Aquí tienes los datos más recientes capturados por los sensores.";
+      } else {
+        respuestaTexto = "He procesado tu solicitud correctamente en el sistema.";
+      }
+    }
+
+    const accionBadge = accion !== "desconocido" 
+      ? `<div class="chat-badge-accion">Acción: ${accion}</div><br>` 
+      : '';
 
     chatBody.innerHTML += `
       <div class="chat-msg ai">

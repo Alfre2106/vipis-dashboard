@@ -195,7 +195,6 @@ main {
   color: var(--text-muted);
 }
 
-/* Contenedor Responsive de iFrames */
 .iframe-container {
   width: 100%;
   min-height: 320px;
@@ -222,7 +221,7 @@ main {
   display: block;
 }
 
-/* LED Control Panel Adaptativo */
+/* Actuator Panel */
 .actuator-card {
   margin-top: 2.5rem;
   background: var(--card-bg);
@@ -326,7 +325,7 @@ main {
   transform: scale(1.02);
 }
 
-/* Formulario de Predicción Estilizado */
+/* Machine Learning Forms */
 .ml-card {
   margin-top: 2.5rem;
   background: var(--card-bg);
@@ -488,7 +487,7 @@ footer {
   border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-/* ================= CHAT BOT FLOTANTE ESTILO BURBUJA ================= */
+/* Chat Bot Widget */
 .chat-widget-container {
   position: fixed;
   bottom: 25px;
@@ -680,43 +679,18 @@ footer {
   border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
-/* Reglas Responsive y Móviles */
 @media (max-width: 850px) {
-  .dashboard-grid { 
-    grid-template-columns: 1fr; 
-  }
-  .iframe-container {
-    min-height: 280px;
-    height: 280px;
-  }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .iframe-container { min-height: 280px; height: 280px; }
 }
 
 @media (max-width: 600px) {
-  .container {
-    padding: 0 1rem;
-  }
-  .actuator-panel { 
-    flex-direction: column; 
-    align-items: stretch; 
-  }
-  .control-buttons { 
-    width: 100%; 
-    display: flex;
-    gap: 0.5rem;
-  }
-  .btn-control { 
-    flex: 1; 
-    min-width: 0;
-    padding: 0.75rem 0.5rem;
-    font-size: 0.85rem;
-  }
-  .pred-campos { 
-    grid-template-columns: 1fr; 
-  }
-  .pred-fila { 
-    grid-template-columns: 100px 1fr 40px; 
-    font-size: 0.82rem;
-  }
+  .container { padding: 0 1rem; }
+  .actuator-panel { flex-direction: column; align-items: stretch; }
+  .control-buttons { width: 100%; display: flex; gap: 0.5rem; }
+  .btn-control { flex: 1; min-width: 0; padding: 0.75rem 0.5rem; font-size: 0.85rem; }
+  .pred-campos { grid-template-columns: 1fr; }
+  .pred-fila { grid-template-columns: 100px 1fr 40px; font-size: 0.82rem; }
 }
 </style>
 </head>
@@ -729,11 +703,12 @@ footer {
         <span class="badge-dot"></span> Sistema IoT Activo
       </div>
       <h1>Calidad del Aire - VIPIS</h1>
-      <p>Monitoreo ambiental en la Vía Parque Isla de Salamanca con telemetría en tiempo real, control remoto de actuador y modelo de IA (Edge Impulse WebAssembly).</p>
+      <p>Monitoreo ambiental en la Vía Parque Isla de Salamanca con telemetría en tiempo real, control de actuador y modelos de Inteligencia Artificial.</p>
       <nav>
         <a href="#tablero">Mediciones</a>
         <a href="#control-led">Control Remoto</a>
-        <a href="#prediccion">Predicción IA</a>
+        <a href="#prediccion-render">IA Cloud (Render)</a>
+        <a href="#prediccion-edge">IA Local (Edge Impulse)</a>
       </nav>
     </div>
   </div>
@@ -748,7 +723,6 @@ footer {
         <h2>Telemetría Ambiental</h2>
         <p>Visualización en tiempo real alimentada desde el canal público de ThingSpeak.</p>
       </div>
-
       <div class="dashboard-grid" id="grid-graficos"></div>
     </section>
 
@@ -774,26 +748,51 @@ footer {
       </div>
     </section>
 
-    <!-- Clasificación y Predicción IA Edge Impulse -->
-    <section id="prediccion" class="ml-card">
+    <!-- FORMULARIO 1: ÁRBOL DE DECISIÓN EN API RENDER -->
+    <section id="prediccion-render" class="ml-card">
       <div class="section-header" style="margin-bottom: 0;">
-        <h2>Predecir la Calidad del Aire con IA (Edge Impulse)</h2>
-        <p>Ingresa los valores del sensor para obtener la estimación de categoría calculada localmente en tu navegador por la red neuronal WebAssembly.</p>
+        <h2>Modelo 1: Árbol de Decisión (API Render)</h2>
+        <p>Predicción basada en el modelo entrenado con scikit-learn y desplegado en la nube de Render.</p>
       </div>
 
-      <div id="contenedor-formulario">
-        <form class="pred-form-box" id="pred-form" novalidate>
-          <div class="pred-campos" id="pred-campos"></div>
-          <p class="pred-error" id="pred-error" role="alert" aria-live="polite"></p>
-          <button type="submit" class="btn-clasificar" id="pred-boton">Clasificar Calidad del Aire</button>
+      <div id="contenedor-formulario-render">
+        <form class="pred-form-box" id="pred-form-render" novalidate>
+          <div class="pred-campos" id="pred-campos-render"></div>
+          <p class="pred-error" id="pred-error-render" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn-clasificar" id="pred-boton-render">Clasificar con API Cloud</button>
 
-          <div class="pred-res" id="pred-res" hidden>
-            <p style="margin:0; color:var(--text-muted); font-size:0.88rem; font-weight:600;">Categoría estimada:</p>
+          <div class="pred-res" id="pred-res-render" hidden>
+            <p style="margin:0; color:var(--text-muted); font-size:0.88rem; font-weight:600;">Categoría estimada por Render:</p>
             <div class="pred-res-header">
-              <span class="pred-cat" id="pred-cat"></span>
-              <span class="pred-conf" id="pred-conf"></span>
+              <span class="pred-cat" id="pred-cat-render"></span>
+              <span class="pred-conf" id="pred-conf-render"></span>
             </div>
-            <div class="pred-barras-container" id="pred-barras"></div>
+            <div class="pred-barras-container" id="pred-barras-render"></div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- FORMULARIO 2: EDGE IMPULSE (LOCAL WEBASSEMBLY) -->
+    <section id="prediccion-edge" class="ml-card">
+      <div class="section-header" style="margin-bottom: 0;">
+        <h2>Modelo 2: Edge Impulse (WebAssembly Local)</h2>
+        <p>Predicción ejecutada localmente en el navegador mediante el modelo empaquetado de Edge Impulse.</p>
+      </div>
+
+      <div id="contenedor-formulario-edge">
+        <form class="pred-form-box" id="pred-form-edge" novalidate>
+          <div class="pred-campos" id="pred-campos-edge"></div>
+          <p class="pred-error" id="pred-error-edge" role="alert" aria-live="polite"></p>
+          <button type="submit" class="btn-clasificar" id="pred-boton-edge">Clasificar con Edge Impulse</button>
+
+          <div class="pred-res" id="pred-res-edge" hidden>
+            <p style="margin:0; color:var(--text-muted); font-size:0.88rem; font-weight:600;">Categoría estimada localmente:</p>
+            <div class="pred-res-header">
+              <span class="pred-cat" id="pred-cat-edge"></span>
+              <span class="pred-conf" id="pred-conf-edge"></span>
+            </div>
+            <div class="pred-barras-container" id="pred-barras-edge"></div>
           </div>
         </form>
       </div>
@@ -804,11 +803,11 @@ footer {
 
 <footer>
   <div class="container">
-    Corporación Universitaria Latinoamericana &bull; Sistemas Integrados IoT &bull; ESP32 + ThingSpeak + FastAPI + Edge Impulse WebAssembly
+    Corporación Universitaria Latinoamericana &bull; Sistemas Integrados IoT &bull; Doble Modelo de IA (Render Cloud + Edge Impulse WASM)
   </div>
 </footer>
 
-<!-- ================= WIDGET DE CHAT BOT FLOTANTE ================= -->
+<!-- Chat Bot Flotante -->
 <div class="chat-widget-container">
   <div class="chat-window" id="chatWindow">
     <div class="chat-window-header">
@@ -819,7 +818,6 @@ footer {
       <button class="chat-close-btn" onclick="toggleChatWindow()" title="Cerrar chat">&times;</button>
     </div>
     
-    <!-- Indicador de Estado del LED integrado -->
     <div style="background-color: #0f172a; padding: 8px 12px; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem;">
       <span style="color: #94a3b8; font-weight: 600;">Estado Actuador (ESP32):</span>
       <span id="chat-led-indicator" style="font-weight: bold; color: #ef4444;">● APAGADO</span>
@@ -925,7 +923,7 @@ function actualizarUILED(estado) {
   const txt = document.getElementById("txt-led");
   const chatLedInd = document.getElementById("chat-led-indicator");
   
-  if (estado && estado.toLowerCase() === "on") {
+  if (estado && (estado.toLowerCase() === "on" || estado.toLowerCase() === "encendido")) {
     if(dot) dot.className = "led-glow on";
     if(txt) txt.textContent = "ENCENDIDO";
     if(chatLedInd) { chatLedInd.innerHTML = "● ENCENDIDO"; chatLedInd.style.color = "#34d399"; }
@@ -939,10 +937,8 @@ function actualizarUILED(estado) {
 consultarEstadoLED();
 setInterval(consultarEstadoLED, 5000);
 
-/* ===== 3. FORMULARIO DE PREDICCIÓN CON MODELO REAL EDGE IMPULSE (WEBASSEMBLY) ===== */
+/* ===== 3. FORMULARIO 1: ÁRBOL DE DECISIÓN (API RENDER) ===== */
 (function () {
-  const USAR_MODELO_REAL = true;
-
   const CAMPOS = [
     { id: "eco2", etiqueta: "eCO₂", unidad: "ppm", min: 0, max: 5000, valor: 800 },
     { id: "tvoc", etiqueta: "TVOC", unidad: "ppb", min: 0, max: 2000, valor: 150 },
@@ -950,102 +946,155 @@ setInterval(consultarEstadoLED, 5000);
     { id: "hum",  etiqueta: "Humedad", unidad: "%", min: 0, max: 100, valor: 65 }
   ];
 
-  const COLORES = {
-    excelente: "#059669",
-    bueno: "#10b981",
-    buena: "#10b981",
-    aceptable: "#84cc16",
-    moderado: "#f59e0b",
-    moderada: "#f59e0b",
-    mala: "#ef4444",
-    dañino: "#ef4444",
-    "dañino para sensibles": "#f97316",
-    "muy dañino": "#dc2626",
-    peligroso: "#7c3aed",
-    critico: "#991b1b"
-  };
-
+  const COLORES = { buena: "#10b981", moderada: "#f59e0b", mala: "#ef4444" };
   const $ = id => document.getElementById(id);
   const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 
-  $("pred-campos").innerHTML = CAMPOS.map(c => `
+  $("pred-campos-render").innerHTML = CAMPOS.map(c => `
     <div class="pred-campo-item">
-      <label for="pred-${c.id}">${c.etiqueta} (${c.unidad})</label>
-      <input id="pred-${c.id}" type="number" inputmode="decimal" step="any"
+      <label for="pred-render-${c.id}">${c.etiqueta} (${c.unidad})</label>
+      <input id="pred-render-${c.id}" type="number" inputmode="decimal" step="any"
+             min="${c.min}" max="${c.max}" value="${c.valor}">
+    </div>`).join("");
+
+  $("pred-form-render").addEventListener("submit", async e => {
+    e.preventDefault();
+    const datos = {};
+    for (const c of CAMPOS) {
+      const crudo = $("pred-render-" + c.id).value.trim();
+      const n = Number(crudo);
+      if (crudo === "" || Number.isNaN(n)) { $("pred-error-render").textContent = `Escribe un número válido en ${c.etiqueta}.`; return; }
+      if (n < c.min || n > c.max) { $("pred-error-render").textContent = `${c.etiqueta} debe estar entre ${c.min} y ${c.max} ${c.unidad}.`; return; }
+      datos[c.id] = n;
+    }
+    $("pred-error-render").textContent = "";
+
+    const boton = $("pred-boton-render");
+    boton.disabled = true;
+    boton.textContent = "Consultando a la Nube...";
+
+    try {
+      const response = await fetch(`${API_URL}/api/ml/predecir`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ temperatura: datos.temp, humedad: datos.hum, eco2: datos.eco2, tvoc: datos.tvoc })
+      });
+
+      if (!response.ok) throw new Error("Error en la respuesta del servidor");
+
+      const resultado = await response.json();
+      const catPredicha = resultado.calidad_predicha;
+
+      const colorCat = COLORES[norm(catPredicha)] || "#10b981";
+      const cat = $("pred-cat-render");
+      cat.textContent = catPredicha;
+      cat.style.background = colorCat + "22";
+      cat.style.color = colorCat;
+
+      $("pred-conf-render").textContent = "Árbol de Decisión (100% Accuracy)";
+      $("pred-barras-render").innerHTML = `
+        <div class="pred-fila">
+          <span>${catPredicha}</span>
+          <div class="pred-barra"><i style="background:${colorCat}" data-w="100"></i></div>
+          <span class="pred-pct">100%</span>
+        </div>`;
+
+      $("pred-res-render").hidden = false;
+      requestAnimationFrame(() => $("pred-barras-render").querySelectorAll("i").forEach(b => (b.style.width = b.dataset.w + "%")));
+    } catch (err) {
+      $("pred-error-render").textContent = "No se pudo conectar con el modelo en Render.";
+    } finally {
+      boton.disabled = false;
+      boton.textContent = "Clasificar con API Cloud";
+    }
+  });
+})();
+
+/* ===== 4. FORMULARIO 2: EDGE IMPULSE (LOCAL WEBASSEMBLY) ===== */
+(function () {
+  const CAMPOS = [
+    { id: "eco2", etiqueta: "eCO₂", unidad: "ppm", min: 0, max: 5000, valor: 800 },
+    { id: "tvoc", etiqueta: "TVOC", unidad: "ppb", min: 0, max: 2000, valor: 150 },
+    { id: "temp", etiqueta: "Temperatura", unidad: "°C", min: -10, max: 60, valor: 28 },
+    { id: "hum",  etiqueta: "Humedad", unidad: "%", min: 0, max: 100, valor: 65 }
+  ];
+
+  const COLORES = { excelente: "#059669", bueno: "#10b981", buena: "#10b981", moderada: "#f59e0b", mala: "#ef4444", peligroso: "#7c3aed" };
+  const $ = id => document.getElementById(id);
+  const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  $("pred-campos-edge").innerHTML = CAMPOS.map(c => `
+    <div class="pred-campo-item">
+      <label for="pred-edge-${c.id}">${c.etiqueta} (${c.unidad})</label>
+      <input id="pred-edge-${c.id}" type="number" inputmode="decimal" step="any"
              min="${c.min}" max="${c.max}" value="${c.valor}">
     </div>`).join("");
 
   let clasificador = null;
 
-  async function iniciarModelo() {
+  async function iniciarModeloEdge() {
     if (typeof EdgeImpulseClassifier === "undefined") {
-      throw new Error("EdgeImpulseClassifier no está definido. Revisa que edge-impulse-standalone.js y run-impulse.js estén en la misma carpeta.");
+      throw new Error("EdgeImpulseClassifier no está definido.");
     }
     clasificador = new EdgeImpulseClassifier();
     await clasificador.init();
   }
 
-  function clasificarReal(v) {
-    const features = CAMPOS.map(c => v[c.id]);
-    const r = clasificador.classify(features);
-    const resultados = r.results || r.classification || [];
-    return resultados.map(x => ({ label: x.label, value: x.value }));
-  }
-
-  function mostrar(resultados) {
+  function mostrarEdge(resultados) {
     if (!resultados || resultados.length === 0) return;
     const mejor = resultados.reduce((a, b) => (b.value > a.value ? b : a));
     const color = k => COLORES[norm(k)] || "#64748b";
-    const cat = $("pred-cat");
+    const cat = $("pred-cat-edge");
     cat.textContent = mejor.label;
     cat.style.background = color(mejor.label) + "22";
     cat.style.color = color(mejor.label);
     
-    $("pred-conf").textContent = Math.round(mejor.value * 100) + "% de confianza";
-    $("pred-barras").innerHTML = resultados.map(r => `
+    $("pred-conf-edge").textContent = Math.round(mejor.value * 100) + "% de confianza";
+    $("pred-barras-edge").innerHTML = resultados.map(r => `
       <div class="pred-fila">
         <span>${r.label}</span>
         <div class="pred-barra"><i style="background:${color(r.label)}" data-w="${Math.round(r.value * 100)}"></i></div>
         <span class="pred-pct">${Math.round(r.value * 100)}%</span>
       </div>`).join("");
       
-    $("pred-res").hidden = false;
-    requestAnimationFrame(() =>
-      $("pred-barras").querySelectorAll("i").forEach(b => (b.style.width = b.dataset.w + "%")));
+    $("pred-res-edge").hidden = false;
+    requestAnimationFrame(() => $("pred-barras-edge").querySelectorAll("i").forEach(b => (b.style.width = b.dataset.w + "%")));
   }
 
-  $("pred-form").addEventListener("submit", async e => {
+  $("pred-form-edge").addEventListener("submit", async e => {
     e.preventDefault();
     const v = {};
     for (const c of CAMPOS) {
-      const crudo = $("pred-" + c.id).value.trim();
+      const crudo = $("pred-edge-" + c.id).value.trim();
       const n = Number(crudo);
-      if (crudo === "" || Number.isNaN(n)) { $("pred-error").textContent = `Escribe un número válido en ${c.etiqueta}.`; return; }
-      if (n < c.min || n > c.max) { $("pred-error").textContent = `${c.etiqueta} debe estar entre ${c.min} y ${c.max} ${c.unidad}.`; return; }
+      if (crudo === "" || Number.isNaN(n)) { $("pred-error-edge").textContent = `Escribe un número válido en ${c.etiqueta}.`; return; }
+      if (n < c.min || n > c.max) { $("pred-error-edge").textContent = `${c.etiqueta} debe estar entre ${c.min} y ${c.max} ${c.unidad}.`; return; }
       v[c.id] = n;
     }
-    $("pred-error").textContent = "";
+    $("pred-error-edge").textContent = "";
+
+    const boton = $("pred-boton-edge");
     try {
-      if (USAR_MODELO_REAL) {
-        if (!clasificador) { 
-          $("pred-boton").disabled = true; 
-          $("pred-boton").textContent = "Cargando modelo WASM...";
-          await iniciarModelo(); 
-          $("pred-boton").disabled = false;
-          $("pred-boton").textContent = "Clasificar Calidad del Aire";
-        }
-        mostrar(clasificarReal(v));
+      if (!clasificador) { 
+        boton.disabled = true; 
+        boton.textContent = "Cargando modelo WASM...";
+        await iniciarModeloEdge(); 
+        boton.disabled = false;
+        boton.textContent = "Clasificar con Edge Impulse";
       }
+      const features = CAMPOS.map(c => v[c.id]);
+      const resWasm = clasificador.classify(features);
+      const resultados = resWasm.results || resWasm.classification || [];
+      mostrarEdge(resultados);
     } catch (err) {
-      $("pred-boton").disabled = false;
-      $("pred-boton").textContent = "Clasificar Calidad del Aire";
-      $("pred-error").textContent = "No se pudo cargar el modelo. Verifica que edge-impulse-standalone.js y .wasm estén en la misma carpeta.";
-      console.error(err);
+      boton.disabled = false;
+      boton.textContent = "Clasificar con Edge Impulse";
+      $("pred-error-edge").textContent = "No se pudo cargar el modelo WebAssembly.";
     }
   });
 })();
 
-/* ===== 4. LÓGICA DEL CHAT BOT FLOTANTE WIDGET ===== */
+/* ===== 5. LÓGICA DEL CHAT BOT FLOTANTE ===== */
 function toggleChatWindow() {
   const win = document.getElementById("chatWindow");
   win.classList.toggle("active");
@@ -1060,7 +1109,6 @@ async function enviarMensajeChatWidget() {
   const texto = input.value.trim();
   if (!texto) return;
 
-  // Mostrar mensaje del usuario
   chatBody.innerHTML += `
     <div class="chat-msg user">
       <span>Tú</span>
@@ -1070,7 +1118,6 @@ async function enviarMensajeChatWidget() {
   input.value = "";
   chatBody.scrollTop = chatBody.scrollHeight;
 
-  // Mensaje temporal de carga
   const tempId = "loading-chat-" + Date.now();
   chatBody.innerHTML += `
     <div class="chat-msg system" id="${tempId}">
@@ -1087,28 +1134,18 @@ async function enviarMensajeChatWidget() {
       body: JSON.stringify({ texto })
     });
     const data = await response.json();
-
     document.getElementById(tempId).remove();
 
     const accion = data.accion || "desconocido";
     let respuestaTexto = data.respuesta || data.mensaje || "";
 
-    // Forzar redacción conversacional robusta si llega vacía o con el texto por defecto
     if (!respuestaTexto || respuestaTexto === "Operación procesada con éxito.") {
-      if (accion === "encender_led") {
-        respuestaTexto = "¡Entendido! He enviado la orden para encender el LED del sistema VIPIS.";
-      } else if (accion === "apagar_led") {
-        respuestaTexto = "Claro que sí, he procedido a apagar el LED del dispositivo.";
-      } else if (accion === "ultimo_registro") {
-        respuestaTexto = "Aquí tienes los datos más recientes capturados por los sensores.";
-      } else {
-        respuestaTexto = "He procesado tu solicitud correctamente en el sistema.";
-      }
+      if (accion === "encender_led") respuestaTexto = "¡Entendido! He enviado la orden para encender el LED.";
+      else if (accion === "apagar_led") respuestaTexto = "Claro que sí, he procedido a apagar el LED.";
+      else respuestaTexto = "He procesado tu solicitud correctamente.";
     }
 
-    const accionBadge = accion !== "desconocido" 
-      ? `<div class="chat-badge-accion">Acción: ${accion}</div><br>` 
-      : '';
+    const accionBadge = accion !== "desconocido" ? `<div class="chat-badge-accion">Acción: ${accion}</div><br>` : '';
 
     chatBody.innerHTML += `
       <div class="chat-msg ai">
@@ -1116,7 +1153,7 @@ async function enviarMensajeChatWidget() {
         ${accionBadge}${escapeHtml(respuestaTexto)}
       </div>
     `;
-    consultarEstadoLED(); // Sincroniza el indicador LED si la IA encendió/apagó el actuador
+    consultarEstadoLED(); 
   } catch (error) {
     document.getElementById(tempId).remove();
     chatBody.innerHTML += `

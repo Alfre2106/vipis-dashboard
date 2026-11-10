@@ -58,4 +58,4 @@ Hosting: GitHub Pages.
 
 Backend / API (Render): https://vipis-air-quality-api.onrender.com
 
-Dataset de Entrenamiento (Kaggle): Indoor Air Quality Monitoring Dataset
+Dataset de Entrenamiento (Kaggle): https://www.kaggle.com/datasets/hemanthkarnati/indoor-air-quality-dataset
